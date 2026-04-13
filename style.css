@@ -179,10 +179,27 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 
 /* LOGO SLOT */
 .logo-placeholder {
-  width: 112px;
-  height: 40px;
-  border-radius: 8px;
-  /* Intentionally empty — user will add logo */
+  display: flex;
+  align-items: center;
+}
+
+.brand-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: var(--cream);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  line-height: 1;
+}
+.brand-logo em {
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* Dark version for hero/footer on light background */
+.brand-logo.dark {
+  color: var(--deep);
 }
 
 .nav-links {
@@ -305,6 +322,13 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 .hero-content {
   flex: 1 1 520px;
   z-index: 2;
+}
+
+.hero-brand {
+  margin-bottom: 1.2rem;
+}
+.hero-brand .brand-logo {
+  font-size: 2rem;
 }
 
 .hero-label {
