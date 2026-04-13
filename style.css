@@ -45,8 +45,8 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 
 /* ── UTILITIES ── */
 .container {
-  width: 90%;
-  max-width: 1160px;
+  width: 92%;
+  max-width: 1380px;
   margin: 0 auto;
 }
 .desktop-only { display: inline; }
@@ -173,7 +173,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   align-items: center;
   gap: 2rem;
   padding: 1.1rem 5%;
-  max-width: 1260px;
+  max-width: 1380px;
   margin: 0 auto;
 }
 
@@ -609,8 +609,8 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 }
 
 .desc-inner {
-  width: 90%;
-  max-width: 1160px;
+  width: 92%;
+  max-width: 1380px;
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1.05fr 1fr;
