@@ -1464,7 +1464,14 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 }
 
 /* ── RESPONSIVE ── */
+
+/* Tablet landscape / small desktop */
 @media (max-width: 1024px) {
+  .hero {
+    padding: 8rem 5% 5rem;
+    gap: 3rem;
+  }
+  .hero-content { flex: 1 1 400px; }
   .features-grid { grid-template-columns: repeat(2, 1fr); }
   .about-grid { grid-template-columns: 1fr; gap: 3rem; }
   .about-visual { order: 1; }
@@ -1473,15 +1480,29 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
 }
 
+/* Tablet portrait */
 @media (max-width: 768px) {
   .hero {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 3rem;
-    padding-top: 7rem;
+    align-items: center;
+    text-align: center;
+    gap: 2.5rem;
+    padding: 7rem 6% 4rem;
+    min-height: unset;
   }
-  .hero-visual { width: 100%; display: flex; justify-content: center; }
-  .phone-mockup { width: 220px; }
+  .hero-content {
+    flex: unset;
+    width: 100%;
+    max-width: 540px;
+  }
+  .hero-sub { max-width: 100%; }
+  .hero-actions { justify-content: center; }
+  .hero-visual {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  .phone-mockup { width: 200px; }
   .features-grid { grid-template-columns: 1fr; gap: 1rem; }
   .steps-row {
     grid-template-columns: 1fr 1fr;
@@ -1493,8 +1514,20 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   .contact-form-wrap { padding: 1.5rem; }
 }
 
+/* Mobile */
 @media (max-width: 480px) {
+  .hero {
+    padding: 6rem 5% 3rem;
+    gap: 2rem;
+  }
+  .hero-title { font-size: clamp(2.2rem, 10vw, 3rem); }
+  .phone-mockup { width: 170px; }
   .steps-row { grid-template-columns: 1fr; }
+  .btn-primary, .btn-ghost {
+    width: 100%;
+    justify-content: center;
+  }
+  .hero-actions { flex-direction: column; width: 100%; }
 }
 
 /* ── FAQ SECTION ── */
