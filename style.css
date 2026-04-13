@@ -199,16 +199,30 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
   display: block;
 }
 
-/* Hero logo */
+/* Brand text logo (hero + footer) */
+.brand-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: var(--cream);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  line-height: 1;
+}
+.brand-logo em {
+  font-style: italic;
+  font-weight: 400;
+}
+.brand-logo.dark {
+  color: var(--deep);
+}
+
+/* Hero brand */
 .hero-brand {
   margin-bottom: 1.4rem;
 }
-.hero-logo-img {
-  width: 140px;
-  height: 140px;
-  border-radius: 20px;
-  object-fit: cover;
-  display: block;
+.hero-brand .brand-logo {
+  font-size: 2rem;
 }
 
 /* Footer logo */
