@@ -87,9 +87,9 @@ if (form) {
     };
 
     try {
-      // Replace YOUR_PROJECT_REF with your Supabase project ref
+      // Replace hcvcpdcdmvmezqvfeolk with your Supabase project ref
       // Found in: Supabase Dashboard → Settings → General → Reference ID
-      const SUPABASE_FUNCTION_URL = 'https://YOUR_PROJECT_REF.supabase.co/functions/v1/contact';
+      const SUPABASE_FUNCTION_URL = 'https://hcvcpdcdmvmezqvfeolk.supabase.co/functions/v1/contact';
 
       const res = await fetch(SUPABASE_FUNCTION_URL, {
         method: 'POST',

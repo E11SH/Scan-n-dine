@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { SMTPClient } from "https://deno.land/x/denomailer@1.6.0/mod.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -67,55 +68,57 @@ serve(async (req: Request) => {
 
   if (dbError) {
     console.error("DB insert error:", dbError);
-    // Don't block email sending if DB insert fails
   }
 
-  // Send email via Resend
-  const resendApiKey = Deno.env.get("RESEND_API_KEY");
-  const recipientEmail = Deno.env.get("RECIPIENT_EMAIL");
-  const senderEmail = Deno.env.get("SENDER_EMAIL") || "noreply@scanndine.com";
+  // Send email via Gmail SMTP
+  const smtpHost     = Deno.env.get("SMTP_HOST")!;
+  const smtpPort     = Number(Deno.env.get("SMTP_PORT")) || 465;
+  const smtpSecure   = Deno.env.get("SMTP_SECURE") === "true";
+  const smtpUser     = Deno.env.get("SMTP_USER")!;
+  const smtpPass     = Deno.env.get("SMTP_PASS")!;
+  const recipientEmail = Deno.env.get("RECIPIENT_EMAIL")!;
 
-  if (resendApiKey && recipientEmail) {
-    const emailRes = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${resendApiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: `ScannDine Contact Form <${senderEmail}>`,
-        to: recipientEmail,
-        reply_to: email,
-        subject: `New Contact Form Submission — ${name}`,
-        text: [
-          `Name:            ${name}`,
-          `Email:           ${email}`,
-          `Restaurant Name: ${business || "—"}`,
-          ``,
-          `Message:`,
-          message,
-        ].join("\n"),
-        html: `
-          <h2>New Contact Form Submission</h2>
-          <table cellpadding="8" style="border-collapse:collapse;font-family:sans-serif;font-size:15px;">
-            <tr><td><strong>Name</strong></td><td>${escapeHtml(name)}</td></tr>
-            <tr><td><strong>Email</strong></td><td><a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></td></tr>
-            <tr><td><strong>Restaurant Name</strong></td><td>${escapeHtml(business || "—")}</td></tr>
-          </table>
-          <p><strong>Message:</strong></p>
-          <p style="white-space:pre-wrap;">${escapeHtml(message)}</p>
-        `,
-      }),
+  const client = new SMTPClient({
+    connection: {
+      hostname: smtpHost,
+      port: smtpPort,
+      tls: smtpSecure,
+      auth: { username: smtpUser, password: smtpPass },
+    },
+  });
+
+  try {
+    await client.send({
+      from: `ScannDine Contact Form <${smtpUser}>`,
+      to: recipientEmail,
+      replyTo: email,
+      subject: `New Contact Form Submission — ${name}`,
+      content: [
+        `Name:            ${name}`,
+        `Email:           ${email}`,
+        `Restaurant Name: ${business || "—"}`,
+        ``,
+        `Message:`,
+        message,
+      ].join("\n"),
+      html: `
+        <h2>New Contact Form Submission</h2>
+        <table cellpadding="8" style="border-collapse:collapse;font-family:sans-serif;font-size:15px;">
+          <tr><td><strong>Name</strong></td><td>${escapeHtml(name)}</td></tr>
+          <tr><td><strong>Email</strong></td><td><a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></td></tr>
+          <tr><td><strong>Restaurant Name</strong></td><td>${escapeHtml(business || "—")}</td></tr>
+        </table>
+        <p><strong>Message:</strong></p>
+        <p style="white-space:pre-wrap;">${escapeHtml(message)}</p>
+      `,
     });
-
-    if (!emailRes.ok) {
-      const errBody = await emailRes.text();
-      console.error("Resend error:", errBody);
-      return new Response(JSON.stringify({ error: "Failed to send message. Please try again later." }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    await client.close();
+  } catch (err) {
+    console.error("SMTP error:", err);
+    return new Response(JSON.stringify({ error: "Failed to send message. Please try again later." }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 
   return new Response(JSON.stringify({ success: true }), {

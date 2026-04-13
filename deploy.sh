@@ -1,29 +1,27 @@
 #!/usr/bin/env bash
 # ─────────────────────────────────────────────────────────
 #  ScannDine – Full Deploy Script
-#  Run this once after filling in your credentials below.
+#  Reads SMTP credentials from .env automatically.
 #  Usage: bash deploy.sh
 # ─────────────────────────────────────────────────────────
 set -e
 
-# ── FILL THESE IN ────────────────────────────────────────
-SUPABASE_PROJECT_REF=""        # e.g. abcdefghijklmnop (Settings → General → Reference ID)
-RESEND_API_KEY=""              # e.g. re_xxxxxxxxxxxx   (resend.com → API Keys)
-RECIPIENT_EMAIL=""             # e.g. you@yourdomain.com
-SENDER_EMAIL=""                # e.g. noreply@yourdomain.com (must be verified in Resend)
-# ─────────────────────────────────────────────────────────
+SUPABASE_PROJECT_REF="hcvcpdcdmvmezqvfeolk"
 
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; NC='\033[0m'
 
-info()    { echo -e "${GREEN}[✓]${NC} $1"; }
-warn()    { echo -e "${YELLOW}[!]${NC} $1"; }
-error()   { echo -e "${RED}[✗]${NC} $1"; exit 1; }
+info()  { echo -e "${GREEN}[✓]${NC} $1"; }
+warn()  { echo -e "${YELLOW}[!]${NC} $1"; }
+error() { echo -e "${RED}[✗]${NC} $1"; exit 1; }
 
-# ── Validate inputs ───────────────────────────────────────
-[[ -z "$SUPABASE_PROJECT_REF" ]] && error "Set SUPABASE_PROJECT_REF in deploy.sh before running."
-[[ -z "$RESEND_API_KEY" ]]       && error "Set RESEND_API_KEY in deploy.sh before running."
-[[ -z "$RECIPIENT_EMAIL" ]]      && error "Set RECIPIENT_EMAIL in deploy.sh before running."
-[[ -z "$SENDER_EMAIL" ]]         && error "Set SENDER_EMAIL in deploy.sh before running."
+# ── Load .env ─────────────────────────────────────────────
+[[ ! -f .env ]] && error ".env file not found."
+export $(grep -v '^#' .env | grep -v '^$' | xargs)
+
+[[ -z "$SMTP_HOST" ]]       && error "SMTP_HOST missing from .env"
+[[ -z "$SMTP_USER" ]]       && error "SMTP_USER missing from .env"
+[[ -z "$SMTP_PASS" ]]       && error "SMTP_PASS missing from .env"
+[[ -z "$RECIPIENT_EMAIL" ]] && error "RECIPIENT_EMAIL missing from .env"
 
 # ── Step 1: Patch script.js with real project ref ────────
 info "Patching script.js with Supabase project ref..."
@@ -45,9 +43,12 @@ info "Pushing database migration..."
 # ── Step 5: Set Edge Function secrets ────────────────────
 info "Setting Edge Function secrets..."
 ~/bin/supabase.exe secrets set \
-  RESEND_API_KEY="$RESEND_API_KEY" \
+  SMTP_HOST="$SMTP_HOST" \
+  SMTP_PORT="${SMTP_PORT:-465}" \
+  SMTP_SECURE="${SMTP_SECURE:-true}" \
+  SMTP_USER="$SMTP_USER" \
+  SMTP_PASS="$SMTP_PASS" \
   RECIPIENT_EMAIL="$RECIPIENT_EMAIL" \
-  SENDER_EMAIL="$SENDER_EMAIL" \
   --project-ref "$SUPABASE_PROJECT_REF"
 info "Secrets set."
 
@@ -56,10 +57,11 @@ info "Deploying contact Edge Function..."
 ~/bin/supabase.exe functions deploy contact --project-ref "$SUPABASE_PROJECT_REF"
 info "Edge Function deployed."
 
-# ── Step 7: Commit changes ───────────────────────────────
-info "Committing changes..."
+# ── Step 7: Commit & push changes ───────────────────────
+info "Committing and pushing changes..."
 git add -A
-git commit -m "chore: wire up Supabase Edge Function and Vercel deploy config"
+git commit -m "chore: update Edge Function to Gmail SMTP and patch project ref" || true
+git push origin main
 
 # ── Step 8: Deploy frontend to Vercel ────────────────────
 info "Deploying frontend to Vercel (browser may open for login)..."
