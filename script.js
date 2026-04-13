@@ -132,3 +132,30 @@ window.addEventListener('scroll', () => {
   const scrollY = window.scrollY;
   hero.style.backgroundPositionY = `${scrollY * 0.12}px`;
 }, { passive: true });
+
+/* 7. FAQ ACCORDION INTERACTION */
+const faqItems = document.querySelectorAll('.faq-item');
+
+faqItems.forEach(item => {
+  const btn = item.querySelector('.faq-btn');
+  const content = item.querySelector('.faq-content');
+
+  btn.addEventListener('click', () => {
+    // Check if the current item is already open
+    const isOpen = item.classList.contains('active');
+
+    // Close all items
+    faqItems.forEach(otherItem => {
+      otherItem.classList.remove('active');
+      otherItem.querySelector('.faq-btn').setAttribute('aria-expanded', 'false');
+      otherItem.querySelector('.faq-content').style.maxHeight = null;
+    });
+
+    // If it wasn't open, open it now
+    if (!isOpen) {
+      item.classList.add('active');
+      btn.setAttribute('aria-expanded', 'true');
+      content.style.maxHeight = content.scrollHeight + "px";
+    }
+  });
+});
