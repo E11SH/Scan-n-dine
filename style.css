@@ -181,25 +181,43 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 .logo-placeholder {
   display: flex;
   align-items: center;
+  overflow: hidden;
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  flex-shrink: 0;
 }
 
-.brand-logo {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.25rem;
-  font-weight: 400;
-  color: var(--cream);
-  letter-spacing: 0.01em;
-  white-space: nowrap;
-  line-height: 1;
-}
-.brand-logo em {
-  font-style: italic;
-  font-weight: 400;
+/* Navbar icon — zoomed in on the centered text */
+.nav-logo-img {
+  width: 130px;
+  height: 130px;
+  object-fit: cover;
+  object-position: center;
+  margin: -41px;
+  border-radius: 10px;
+  display: block;
 }
 
-/* Dark version for hero/footer on light background */
-.brand-logo.dark {
-  color: var(--deep);
+/* Hero logo */
+.hero-brand {
+  margin-bottom: 1.4rem;
+}
+.hero-logo-img {
+  width: 140px;
+  height: 140px;
+  border-radius: 20px;
+  object-fit: cover;
+  display: block;
+}
+
+/* Footer logo */
+.footer-logo-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 14px;
+  object-fit: cover;
+  display: block;
 }
 
 .nav-links {
@@ -322,13 +340,6 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 .hero-content {
   flex: 1 1 520px;
   z-index: 2;
-}
-
-.hero-brand {
-  margin-bottom: 1.2rem;
-}
-.hero-brand .brand-logo {
-  font-size: 2rem;
 }
 
 .hero-label {
