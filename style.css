@@ -181,22 +181,7 @@ button { cursor: pointer; font-family: inherit; border: none; background: none; 
 .logo-placeholder {
   display: flex;
   align-items: center;
-  overflow: hidden;
-  width: 48px;
-  height: 48px;
-  border-radius: 10px;
   flex-shrink: 0;
-}
-
-/* Navbar icon — zoomed in on the centered text */
-.nav-logo-img {
-  width: 130px;
-  height: 130px;
-  object-fit: cover;
-  object-position: center;
-  margin: -41px;
-  border-radius: 10px;
-  display: block;
 }
 
 /* Brand text logo (hero + footer) */
